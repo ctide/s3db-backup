@@ -2,7 +2,7 @@ Description:
     generates rake tasks for backups and restores to and from amazon s3
 
 Example:
-    ./script/generate s3db_backup
+    rails g s3db_backup
 
     This will create:
         lib/tasks/s3db_backup.rake
