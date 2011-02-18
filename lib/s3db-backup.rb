@@ -61,7 +61,11 @@ class S3dbBackup
     config = ActiveRecord::Base.configurations[RAILS_ENV || 'development']
     ActiveRecord::Base.connection.recreate_database(config['database'], config)
     puts "** Untarring db/latest_prod_dump.sql.gz"
-    result = system("cd db && gunzip latest_prod_dump.sql.gz") if File.exist?("db/latest_prod_dump.sql.gz")
+    if File.exist?("db/latest_prod_dump.sql.gz")
+      result = system("cd db && gunzip latest_prod_dump.sql.gz") 
+    else
+      raise "DB file not found"
+    end
     raise "Untarring db/latest_prod_dump.sql.gz failed with exit code: #{result}" unless result == true
     
     puts "** Loading dump with mysql into #{config['database']}"
