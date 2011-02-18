@@ -4,7 +4,7 @@ require "progressbar"
 
 class S3dbBackup
   def self.backup
-    aws = YAML::load_file(File.join(Rails.root, "config", "s3_config.yml"))
+    aws = setup_config
     config = ActiveRecord::Base.configurations[RAILS_ENV]
 
     mysqldump = `which mysqldump`.strip
@@ -34,7 +34,7 @@ class S3dbBackup
   end
   
   def self.fetch
-    aws = YAML::load_file(File.join(Rails.root, "config", "s3_config.yml"))
+    aws = setup_config
     s3 = RightAws::S3Interface.new(aws['aws_access_key_id'], aws['secret_access_key'])
     bucket = aws['production']['bucket']
     all_dump_keys = s3.list_bucket(bucket, {:prefix => "mysql"})
@@ -86,7 +86,16 @@ class S3dbBackup
   end
   
   def self.sync_public_system_files
-    aws = YAML::load_file(File.join(Rails.root, "config", "s3_config.yml"))
+    aws = setup_config
     system("bash -c 'AWS_ACCESS_KEY_ID=#{aws['aws_access_key_id']} AWS_SECRET_ACCESS_KEY=#{aws['secret_access_key']} AWS_CALLING_FORMAT=SUBDOMAIN $(which s3sync) -s -r #{Rails.root}/public/system #{aws[RAILS_ENV || 'development']['bucket']}:files'")
+  end
+  
+  def self.setup_config
+    aws = YAML::load_file(File.join(Rails.root, "config", "s3_config.yml"))
+    if aws['use_env_variables'] == true
+      aws['aws_access_key_id'] = ENV[aws['aws_access_key_id']]
+      aws['secret_access_key'] = ENV[aws['secret_access_key']]
+    end
+    aws
   end
 end
