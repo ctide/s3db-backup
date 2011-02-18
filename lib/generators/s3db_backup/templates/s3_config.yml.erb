@@ -1,0 +1,14 @@
+<!-- If you would prefer to use ENV variables, set this to true and then define the ENV keys you're using -->
+<!-- For example, if your aws access key is accessible via ENV['APP_S3_ACCESS_KEY'] you would set aws_access_key_id to APP_S3_ACCESS_KEY -->
+use_env_variables: false
+
+aws_access_key_id: "<your aws access key here>"
+secret_access_key: "<your aws secret key here>"
+
+
+
+production:
+  bucket: "<%= Rails.root.basename.to_s %>-production"
+
+development:
+  bucket: "<%= Rails.root.basename.to_s %>-development"
