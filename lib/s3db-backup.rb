@@ -16,7 +16,7 @@ class S3dbBackup
     ccrypt = `which ccrypt`.strip
     raise "Please make sure that 'ccrypt' is installed and in your path!" if ccrypt.empty?
 
-    raise "Please specify a bucket for your #{Rails.env} environment in config/s3config.yml" if aws[RAILS_ENV].nil?
+    raise "Please specify a bucket for your #{Rails.env} environment in config/s3config.yml" if aws[Rails.env].nil?
 
     latest_dump = "mysql-#{config['database']}-#{Time.now.strftime('%d-%m-%Y-%Hh%Mm%Ss')}.sql.gz"
     mysql_dump_path = Tempfile.new(latest_dump).path
